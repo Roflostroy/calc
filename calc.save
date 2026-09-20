@@ -1,0 +1,42 @@
+#!/bin/bash
+echo "Введи переменную 1"
+read p1;
+if [[ ! "$p1" =~ ^[а-яА-Яa-zA-Z]$ ]];
+then
+echo "Засчитано";
+else
+echo "Недопустимый символ";
+exit 1
+fi
+
+echo  "Введи, что ты будешь делать с числами";
+read op;
+if [[ "$op" = "-" ]];
+then
+echo "Вычитаем"
+elif [[ "$op" = "+" ]];
+then
+echo "Складываем"
+elif [[ "$op" = "/" ]];
+then
+echo "Делим"
+elif [[ "$op" = "*" ]];
+then
+echo "Умножаем";
+else
+echo  "символ отсутствует"
+fi
+
+echo "Введи переменную 2"
+read p2;
+if [[ ! "$p2" =~ ^[а-яА-Яa-zA-Z]$ ]];
+then
+echo  "Идет вычисление";
+else
+   echo "Недопустимый символ";
+   exit 1
+fi
+
+r=$((p1"$op"p2));
+echo "$r";
+exit 0
