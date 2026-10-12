@@ -1,11 +1,10 @@
 #!/bin/bash
-if [ "$#" -eq 3 ];
-then
+
+if [ "$#" -eq 3 ]; then
     p1="$1"
     op="$2"
     p2="$3"
-elif [ "$#" -eq 0 ];
-then
+elif [ "$#" -eq 0 ]; then
     echo "Введи переменную 1:"
     read p1
 
@@ -19,43 +18,51 @@ else
     echo "Использование: $0 [число1] [операция] [число2]"
     exit 1
 fi
-if [[ "$p1" =~ ^[0-9]+$ ]]; then
+
+p1=$(echo "$p1" | tr ',' '.')
+p2=$(echo "$p2" | tr ',' '.')
+num_regex="^[0-9]+([.][0-9]+)?$"
+
+if [[ "$p1" =~ $num_regex ]]; then
     echo "Переменная 1: Засчитано"
 else
     echo "Ошибка: В переменной 1 должно быть число!"
     exit 1
 fi
-if [[ "$op" == "-" ]];
-then
+
+if [[ "$op" == "-" ]]; then
     echo "Вычитаем..."
-elif [[ "$op" == "+" ]];
-then
+elif [[ "$op" == "+" ]]; then
     echo "Складываем..."
-elif [[ "$op" == "/" ]];
-then
+elif [[ "$op" == "/" ]]; then
     echo "Делим..."
-elif [[ "$op" == "*" ]];
-then
+elif [[ "$op" == "*" ]]; then
     echo "Умножаем..."
 else
     echo "Ошибка: Символ операции отсутствует или неверен"
     exit 1
 fi
-if [[ "$p2" =~ ^[0-9]+$ ]]; then
+
+if [[ "$p2" =~ $num_regex ]]; then
     echo "Переменная 2: Засчитано"
 else
     echo "Ошибка: В переменной 2 должно быть число!"
     exit 1
 fi
 
-if [[ "$op" == "/" && "$p2" -eq 0 ]];
-then
-    echo "Ошибка: Деление на ноль невозможно!"
-    exit 1
+if [[ "$op" == "/" ]]; then
+    is_zero=$(echo "$p2 == 0" | bc -l)
+    if [ "$is_zero" -eq 1 ]; then
+        echo "Ошибка: Деление на ноль невозможно!"
+        exit 1
+    fi
 fi
 
 echo "Идет вычисление..."
-r=$(($p1"$op"$p2))
+
+r=$(echo "scale=4; $p1 $op $p2" | bc -l)
+r=$(echo "$r" | sed '/\./s/\.\{0,1\}0\{1,\}$//')
+
 echo "Результат: $r"
 
 exit 0
